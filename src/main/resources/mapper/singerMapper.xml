@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="singerMapper">
+
+	<select id="getSong" parameterType="com.wizontech.kct.entity.SingerVo" resultType="java.util.HashMap">
+	SELECT so.SONG_ID, so.SONG_TITLE, so.SINGER_ID, so.ALBUM_ID, si.SINGER_NAME, so.BUY_CNT
+		FROM 
+		(
+				SELECT I.SONG_ID, I.SONG_TITLE, I.SINGER_ID, I.ALBUM_ID, I.BUY_CNT
+				FROM 
+				(
+					SELECT SONG_ID, SONG_TITLE, SINGER_ID, ALBUM_ID, BUY_CNT
+					FROM SONG_INF
+					WHERE USE_YN = 1
+        				AND DEL_YN = 0
+                        AND SINGER_ID= ${singerId}
+				) I
+  		      INNER JOIN SONG_VCODE_MAP M
+   		     ON I.SONG_ID = M.SONG_ID
+				INNER JOIN SONG_VCODE_INF V
+  		      ON M.VCODE = V.VCODE
+ 		       AND M.SONG_PART = V.SONG_PART
+   		     WHERE M.SONG_PART &lt; 10
+   		     	AND V.USE_YN = 1
+				AND V.FILE_YN = 1
+				AND V.DEL_YN = 0
+				GROUP BY I.SONG_ID
+		) so
+		LEFT OUTER JOIN ALBUM_INF al
+		ON so.ALBUM_ID = al.ALBUM_ID
+		INNER JOIN SINGER_INF si
+		ON so.SINGER_ID = si.SINGER_ID
+        ORDER BY so.BUY_CNT
+        LIMIT ${start}, ${rowPerPage};
+	</select>
+	
+	<select id="getAlbum" parameterType="com.wizontech.kct.entity.SingerVo" resultType="java.util.HashMap">
+	    SELECT al.*, si.SINGER_NAME, DATE_FORMAT(al.RELEASE_DATE, '%Y/%m/%d') AS R_DATE
+		FROM ALBUM_INF al, SINGER_INF si,
+        (
+			SELECT ALBUM_ID FROM SONG_INF WHERE SINGER_ID = ${singerId}
+			GROUP BY ALBUM_ID
+        ) so
+		WHERE so.ALBUM_ID = al.ALBUM_ID 
+       		AND al.SINGER_ID = si.SINGER_ID
+			AND al.USE_YN = '1'
+			AND al.DEL_YN = '0'
+		ORDER BY al.RELEASE_DATE DESC
+		LIMIT ${start}, ${rowPerPage}
+	    <!--  
+		SELECT al.*, si.SINGER_NAME, DATE_FORMAT(al.RELEASE_DATE, '%Y/%m/%d') AS R_DATE
+		FROM ALBUM_INF al, SINGER_INF si
+		WHERE al.SINGER_ID=si.SINGER_ID 
+			AND al.SINGER_ID=${singerId}
+			AND al.USE_YN = '1'
+            AND al.DEL_YN = '0'
+		LIMIT ${start}, ${rowPerPage}
+		-->
+	</select>
+	
+	<select id="totalCntSong" parameterType="com.wizontech.kct.entity.SingerVo" resultType="java.lang.Integer">
+	SELECT COUNT(SONG_ID) AS totalCnt FROM
+	    (
+		SELECT so.SONG_ID
+			FROM 
+			(
+					SELECT I.SONG_ID, I.SINGER_ID, I.ALBUM_ID
+					FROM 
+					(
+						SELECT SONG_ID, SINGER_ID, ALBUM_ID
+						FROM SONG_INF
+						WHERE USE_YN = 1
+	        				AND DEL_YN = 0
+	                        AND SINGER_ID= ${singerId}
+					) I
+	  		      INNER JOIN SONG_VCODE_MAP M
+	   		     ON I.SONG_ID = M.SONG_ID
+					INNER JOIN SONG_VCODE_INF V
+	  		      ON M.VCODE = V.VCODE
+	 		       AND M.SONG_PART = V.SONG_PART
+	   		     WHERE M.SONG_PART &lt; 10
+	   		     	AND V.USE_YN = 1
+					AND V.FILE_YN = 1
+					AND V.DEL_YN = 0
+					GROUP BY I.SONG_ID
+			) so
+			LEFT OUTER JOIN ALBUM_INF al
+			ON so.ALBUM_ID = al.ALBUM_ID
+			INNER JOIN SINGER_INF si
+			ON so.SINGER_ID = si.SINGER_ID
+		) A;
+	</select>
+	
+	<select id="totalCntAlbum" parameterType="com.wizontech.kct.entity.SingerVo" resultType="java.lang.Integer">
+		SELECT COUNT(al.ALBUM_ID) AS totalCnt 
+		FROM ALBUM_INF al, SINGER_INF si,
+       (
+			SELECT ALBUM_ID FROM SONG_INF WHERE SINGER_ID = ${singerId}
+			GROUP BY ALBUM_ID
+        ) so
+		WHERE so.ALBUM_ID = al.ALBUM_ID 
+       		AND al.SINGER_ID = si.SINGER_ID
+			AND al.USE_YN = '1'
+            AND al.DEL_YN = '0'
+	</select>
+
+</mapper>

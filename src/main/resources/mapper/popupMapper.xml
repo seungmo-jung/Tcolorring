@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="popupMapper">
+	<select id="getVcodeList" parameterType="String" resultType="com.wizontech.kct.entity.VcodeVo">
+		SELECT V.SONG_TITLE, V.SINGER_NAME, V.SONG_ID, V.LONGPLAY_YN, V.SONG_PART, V.VCODE, P.SONG_PRICE, P.SUB_CODE
+		FROM 
+    	(	
+			SELECT  sv.VCODE, sv.SONG_PART, sv.SONG_ID, sv.LONGPLAY_YN, so.SONG_TITLE, si.SINGER_NAME
+			FROM SONG_VCODE_INF sv, SONG_INF so, SINGER_INF si
+			WHERE sv.SONG_ID = #{song_id:VARCHAR}
+			AND sv.SONG_ID = so.SONG_ID
+			AND so.SINGER_ID = si.SINGER_ID
+    	) V
+		INNER JOIN 
+			( SELECT C.SONG_ID, C.SUB_CODE, P.PID, C.LONGPLAY_YN
+			,(CASE WHEN C.PRICE_FLAG ='F' THEN 0
+				ELSE P.PRICE_ORIGIN + P.PRICE_GAP END) AS SONG_PRICE
+			FROM MCODE_CURRENT C
+			INNER JOIN PRICE_INF P
+			ON (CASE WHEN C.PRICE_FLAG IN ('G', 'N', 'F') THEN 'G'
+			ELSE C.PRICE_FLAG END) = P.PRICE_FLAG
+			WHERE C.SONG_ID = #{song_id:VARCHAR}
+				AND C.LONGPLAY_YN = P.LONGPLAY_YN
+			)P
+		ON V.LONGPLAY_YN = P.LONGPLAY_YN
+		ORDER BY LONGPLAY_YN, SONG_PART;
+	</select>
+
+	<insert id="setPurchaseHistory" parameterType="com.wizontech.kct.entity.PurchaseVo">
+		INSERT INTO
+		USER_PURCHASE_HIST(SO_CUST_NO, MDN, VCODE, SONG_ID, SUB_CODE, SONG_PART, LONGPLAY_YN, PRICE, PURCHASE_DATE)
+		VALUES(#{so_cust_no:VARCHAR}, #{mdn:VARCHAR}, #{vcode:VARCHAR}, #{song_id:VARCHAR}, #{sub_code:VARCHAR}
+		,#{song_part:VARCHAR}, #{longplay_yn:VARCHAR}, #{price:VARCHAR}, now());
+	</insert>
+	
+	<insert id="setUserPurchase" parameterType="com.wizontech.kct.entity.PurchaseVo">
+	    INSERT INTO 
+	    USER_PURCHASE(SO_CUST_NO, MDN, VCODE, SONG_ID, SONG_PART, LONGPLAY_YN, PRICE, PURCHASE_DATE, DEL_YN, DEL_DATE)
+		VALUES (#{so_cust_no:VARCHAR}, #{mdn:VARCHAR}, #{vcode:VARCHAR}, #{song_id:VARCHAR}, #{song_part:VARCHAR}
+		, #{longplay_yn:VARCHAR}, #{price:VARCHAR}, now(), '0', NULL);
+	</insert>
+	
+	<select id="checkPurchase" parameterType="com.wizontech.kct.entity.PurchaseVo" resultType="int">
+	    SELECT COUNT(SO_CUST_NO) 
+		FROM USER_PURCHASE
+		WHERE SO_CUST_NO = #{so_cust_no:VARCHAR}
+		AND VCODE = #{vcode:VARCHAR}
+	</select>
+	
+	<update id="updateSongCnt" parameterType="com.wizontech.kct.entity.PurchaseVo">
+	    UPDATE SONG_INF SET BUY_CNT = BUY_CNT+1 WHERE SONG_ID= #{song_id:VARCHAR};
+	</update>
+</mapper>

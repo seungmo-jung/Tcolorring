@@ -1,0 +1,177 @@
+@charset "utf-8";
+
+/*content*/
+
+/*.call{width:695px; align:center; position:absolute; left:50%; margin-left:-347px;}*/
+.call{width:695px; margin:0 auto}
+.call .top{position:relative;padding-bottom:15px;border-bottom:1px solid #cdcdcd}
+.call .top .login_info{position:absolute;right:0;top:17px}
+.call .stit{margin-top:15px;font-size:16px;font-weight:bold;letter-spacing:-1px;color:#333}
+.call .btn_more{padding-right:13px;background:url(/img/design/btn_more.gif) no-repeat right center}
+.call .search_area{position:relative;margin-top:18px;padding:8px 12px;background-color:#ececec;z-index:11}
+.call .search_area .search_input{position:relative;width:596px;height:30px;background:url(/img/design/bg_search.gif) no-repeat 0 0}
+.call .search_area .search_input .search_sel{position:absolute;left:30px;top:2px;width:90px;background:#fff url(/img/design/bg_select.gif) no-repeat 75px 8px}
+.call .search_area .search_input .search_sel li{display:none;padding:4px 5px;border-bottom:1px solid #e0e0e0;;border-left:1px solid #e0e0e0;border-right:1px solid #e0e0e0}
+.call .search_area .search_input .search_sel li:first-child{display:block;border-left:none;border-right:none}
+.call .search_area .search_input .search_sel li a{display:block}
+.call .search_area .search_input .search_sel li.on{background-color:#efefef}
+.call .search_area .search_input .search_ip{position:absolute;left:147px;top:2px}
+.call .search_area .search_input .search_ip input[type='text']{border:none;width:420px;height:25px;line-height:25px;background-color:#fff}
+.call .search_area .btn_search{display:block;position:absolute;right:15px;top:8px}
+
+.call .lastest_album{margin-top:35px;position:relative;padding-top:26px;background:url(/img/design/box_top.gif) no-repeat 0 0;z-index:10}
+.call .lastest_album .inner{padding:0 20px 26px;background:url(/img/design/box_bt.gif) no-repeat 0 bottom}
+.call .lastest_album .inner .btn_more{display:block;position:absolute;right:20px;top:23px}
+.call .lastest_album .inner .list{padding-top:15px;*zoom:1}
+.call .lastest_album .inner .list:after{content:"";display:block;clear:both}
+.call .lastest_album .inner .list > li{float:left;margin-left:23px;}
+.call .lastest_album .inner .list > li:first-child{margin-left:0}
+.call .lastest_album .inner .list > li > a{display:block}
+.call .lastest_album .inner .list > li > a > img{display:block;width:111px;height:111px;}
+/* singer 와 singer strong 에 ellipsis 추가 작업함. */
+.call .lastest_album .inner .list > li .singer{margin-top:10px;color:#000;text-align:center;width:100px;dispaly:inline-block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.call .lastest_album .inner .list > li .singer strong{display:block; width:100px;dispaly:inline-block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+
+.call .tab{position:relative;margin-top:40px;width:100%;border-top:3px solid #656565;border-bottom:1px solid #e2e2e2;background-color:#fafafa;*zoom:1}
+.call .tab:after{content:"";display:block;clear:both}
+.call .tab > li{float:left}
+.call .tab > li > a{display:block;padding:10px 34px;border-right:1px solid #e2e2e2;font-size:14px}
+.call .tab > li.on > a{position:relative;top:1px;background-color:#fff}
+.call .tab .detail_tab{display:none;position:absolute;left:30px;top:46px;font-size:12px}
+.call .tab .detail_tab > a{margin-left:5px;padding-left:10px;background:url(/img/design/bg_bar.gif) no-repeat 0 center}
+.call .tab .detail_tab > a:first-child{margin-left:0;padding-left:0;background:none}
+.call .tab .detail_tab > a.on{font-weight:bold}
+
+/*장르 더보기 페이지용 detail_tab*/
+.call .genre_detail_tab{left:30px;top:46px;font-size:12px}
+.call .genre_detail_tab > a{margin-left:5px;padding-left:10px;background:url(/img/design/bg_bar.gif) no-repeat 0 center}
+.call .genre_detail_tab > a:first-child{margin-left:0;padding-left:0;background:none}
+.call .genre_detail_tab > a.on{font-weight:bold}
+
+.call .info_album{margin-top:15px;position:relative;padding:38px 30px 38px 250px;border:1px solid #d4d4d4;border-top:2px solid #a7a7a7}
+.call .info_album .img_album{position:absolute;left:30px;height:30px;}
+.call .info_album .img_album > img{width:161px;height:161px;}
+.call .info_album .info_detail > dt{margin-bottom:15px;font-weight:bold;color:#000;font-size:15px}
+.call .info_album .info_detail > dd{margin-top:10px;color:#000}
+.call .info_album .info_detail > dd > span{display:inline-block;width:70px;color:#d28da8;*display:inline;*zoom:1}
+
+/*플레이어*/
+.player{width:440px;background-color:#17191a}
+.player .cont{position:relative;padding:12px 15px 20px}
+.player .cont .type_ring{position:absolute;right:15px;top:15px}
+.player .cont .type_ring > a{color:#949fad}
+.player .cont .tit_song{margin:20px 0 10px;color:#fff;font-family:"돋움",Dotum}
+.player .cont .info_ring{margin-top:20px;position:relative}
+.player .cont .info_ring .time {color:#667281;font-family:"돋움",Dotum;}
+.player .cont .info_ring .vat {color:#667281;font-family:"돋움",Dotum; font-size:5pt;}
+.player .cont .info_ring .btn_pay{position:absolute;right:15px;top:0}
+.player .song_flow{border-top:1px solid #000;*zoom:1}
+.player .song_flow:after{content:"";display:block;clear:both}
+.player .song_flow li{width:33%;float:left}
+.player .song_flow li:first-child{width:34%}
+.player .song_flow li a{display:block;padding:12px 0 14px;border-right:1px solid #000;text-align:center;color:#fff;background-color:#202020}
+.player .song_flow li:first-child a{border-left:0}
+.player .song_flow li.on a{background-color:#442035}
+
+/*마이페이지*/
+.phone_set{margin-top:15px;*zoom:1}
+.phone_set:after{content:"";display:block;clear:both}
+.phone_set > div{position:relative;margin-left:18px}
+.phone_set .btn_set{position:absolute;left:124px;top:143px}
+
+/*팝업*/
+.pop{width:415px;padding:20px}
+/*.pop .select_song .select_area{position:relative;width:100%;height:33px;height:32px \9}*/
+.pop .select_song .select_area{top-margin:12px;}
+:root .pop .select_song .select_area{height:33px\0/IE9}
+.pop .select_song .select_area .search_sel{position:absolute;left:0;top:1px;width:100%;border-bottom:1px solid #e0e0e0;background:#fff url(../images/bg_select.gif) no-repeat 95% 12px}
+.pop .select_song .select_area .search_sel li{display:none;padding:8px 5px;border-left:1px solid #e0e0e0;border-right:1px solid #e0e0e0}
+.pop .select_song .select_area .search_sel li:first-child{display:block;border-left:none;border-right:none}
+.pop .select_song .select_area .search_sel li a{display:block}
+.pop .select_song .select_area .search_sel li.on{background-color:#efefef}
+.pop .select_song .select_area .search_sel.time{left:100px;width:60px}
+.pop .select_song .select_area .search_sel.time:first-child{left:0}
+.pop .select_song .select_area .dash{display:block;position:absolute;left:77px;top:8px}
+.pop .select_song.tb_type th{padding:8px 0;color:#e80c78;border-bottom:1px solid #e2e2e2;text-align:center}
+.pop .select_song.tb_type td{padding:0;border-bottom:1px solid #e2e2e2}
+.pop .select_song.tb_type td input[type='text']{border:none}
+.pop .select_song.tb_type .addbtn{padding:8px 0 0 0; text-align:center;}
+
+
+/*table*/
+.tb_type{margin-top:15px;border-top:1px solid #e2e2e2}
+/* table-layout:fixed 추가.*/
+.tb_type table{width:100%; table-layout:fixed;}
+.tb_type table thead th{padding:8px 0;border-bottom:3px solid #e80c78;text-align:center;color:#ca2e7a;font-size:12px;font-weight:bold;width:100%}
+.tb_type table tbody td{padding:15px 0 15px 15px;border-bottom:1px solid #e2e2e2;font-size:12px;color:#393939}
+.tb_type table tbody td.tac{padding:15px 0}
+
+/*추가*/
+.tb_type table tbody td.ellipsis{dispaly:inline-block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+
+/*text*/
+.txt_pink{color:#e80c78}
+.text1{font-size:14px;color:#676767;line-height:1.4}
+
+/*paging*/
+.paging{width:100%; margin-top:23px; text-align:center}
+.paging a{margin:0 5px}
+.paging a img{position:relative; top:-2px; *top:0;}
+.paging a.on{font-weight:bold; text-decoration:underline; color:#e80c78}
+
+/*album more */
+.call .album-div {position: relative; margin-top:10px}
+.call .album-div .album-list {list-style-type:none; width:94%; margin:auto;}
+.call .album-div .album-list > li {width: 320px; height:130px; float:left; vertical-align:middle;display: block;}
+.call .album-div .album-list > li .album-img {margin:5px; float:left; width:90px; height:93px}
+.call .album-div .album-list > li .album-info {width:220px; float:left; text-align:left; margin-top:5px}
+.call .album-div .album-list > li .album-info .ellipsis {width:220px;dispaly:inline-block;text-overflow:ellipsis;overflow:hidden;white-space:nowrap}
+.call .album-div .album-list > li .album-info > dd {margin:0px; !important}
+
+/*about search*/
+.call .tab-menu-div {position:relative;}
+.call .tab-menu-div .song-menu{list-style:none;margin:0px;}
+.call .tab-menu-div .song-menu li{float:left;}
+.call .sort-song-div .on {font-weight:bold}
+
+/* 검색 페이지에서 검색 별 카운터*/
+span h3 { padding:10px; margin:0px; border-bottom: 1px solid #bcbcbc;}
+
+/*search song sort div*/
+.sort-song-div{top:15px; right:15px; margin-top:10px; margin-bottom:-5px;}
+
+/*search not found , help div*/
+.search-nf-div {text-align:left; border-bottom: 1px solid #bcbcbc;}
+.search-nf-div em{font-style:normal; color:#0A92C3;}
+.search-help-div p{text-align:left; border-bottom: 1px solid #bcbcbc; margin:0px; padding:20px; }
+
+/* paging */
+.paging {margin:15px; clear:left;}
+	
+.singer-list li {
+	width: 150px; 
+	height:80px; 
+	float:left; 
+	text-align:left; 
+	margin: 10px 5px; 
+	list-style-opsition:inside; 
+	white-space: nowrap; 
+	overflow:hidden; 
+	text-overflow:ellipsis;
+ }
+
+select.songList {
+	width: 300px;
+	overflow:hidden; 
+    white-space:nowrap;
+    -ms-text-overflow:ellipsis;
+    text-overflow:ellipsis;
+}
+
+select.time {
+	width: 100px;
+	overflow:hidden; 
+    white-space:nowrap;
+    -ms-text-overflow:ellipsis;
+    text-overflow:ellipsis;
+}

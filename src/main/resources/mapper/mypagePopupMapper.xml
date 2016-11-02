@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mypagePopupMapper">
+	
+    <!-- Popup 창 곡 리스트 쿼리 -->
+	<select id="getSongList" parameterType="String" resultType="com.wizontech.kct.entity.PurchaseSongVo">
+		SELECT so.SONG_ID, so.SONG_TITLE, si.SINGER_NAME, ph.VCODE, ph.SONG_PART, ph.LONGPLAY_YN ,
+		CASE ph.LONGPLAY_YN
+			WHEN '1' THEN '롱'
+			WHEN '0' THEN '일반' 
+		END AS PH_LONGPLAY_YN,
+		CASE ph.SONG_PART
+			WHEN '1' THEN '하이라이트'
+			WHEN '2' THEN '전반부'
+			WHEN '3' THEN '후반부'
+		END AS PH_SONG_PART
+		FROM SONG_INF so, SINGER_INF si, USER_PURCHASE ph 
+		WHERE ph.SO_CUST_NO=#{so_cust_no:VARCHAR}
+			AND so.USE_YN='1'
+			AND ph.SONG_ID=so.SONG_ID
+			AND si.SINGER_ID=so.SINGER_ID;
+	</select>
+	
+	<!-- 듣기 곡 정보 가져오기 -->
+	<select id="getListenSongInf" parameterType="String" resultType="com.wizontech.kct.entity.PopupVo">
+	    SELECT so.SONG_TITLE, si.SINGER_NAME
+        FROM SONG_INF so
+        INNER JOIN SINGER_INF si
+        ON so.SINGER_ID = si.SINGER_ID
+        WHERE so.SONG_ID = #{song_id:VARCHAR};
+    </select>
+	
+	<!-- Caller List 쿼리 -->
+	<select id="getCallerList" parameterType="String" resultType="com.wizontech.kct.entity.CallerListVo">
+	    SELECT uc.MDN, uc.CALLER_MDN, so.SONG_TITLE, si.SINGER_NAME, 
+			CASE uc.LONGPLAY_YN
+				WHEN '1' THEN '롱'
+	            WHEN '0' THEN '일반'
+			END AS LONGPLAY_YN,
+	        CASE uc.SONG_PART
+				WHEN '1' THEN '하이라이트'
+	            WHEN '2' THEN '전반주'
+	            WHEN '3' THEN '후반부'
+	        END AS SONG_PART
+		FROM SONG_INF so, SINGER_INF si,
+		(SELECT MDN, CALLER_MDN, SONG_ID, LONGPLAY_YN, SONG_PART FROM USER_CALLER_RING WHERE MDN = #{mdn:VARCHAR}) uc
+		WHERE so.SONG_ID = uc.SONG_ID
+			AND so.SINGER_ID = si.SINGER_ID;
+	</select>
+	
+	<select id="getTimeList" parameterType="String" resultType="com.wizontech.kct.entity.TimeListVo">
+	    SELECT ut.MDN, ut.S_TIME, ut.E_TIME, so.SONG_TITLE, si.SINGER_NAME, 
+			CASE ut.LONGPLAY_YN
+				WHEN '1' THEN '롱'
+	            WHEN '0' THEN '일반'
+			END AS LONGPLAY_YN,
+	        CASE ut.SONG_PART
+				WHEN '1' THEN '하이라이트'
+	            WHEN '2' THEN '전반주'
+	            WHEN '3' THEN '후반부'
+	        END AS SONG_PART
+		FROM SONG_INF so, SINGER_INF si,
+		(SELECT MDN, S_TIME, E_TIME, SONG_ID, LONGPLAY_YN, SONG_PART FROM USER_TIME_RING WHERE MDN = #{mdn:VARCHAR}) ut
+		WHERE so.SONG_ID = ut.SONG_ID
+		AND so.SINGER_ID = si.SINGER_ID;
+	</select>
+	
+	<select id="getSong" parameterType="java.lang.Integer" resultType="java.util.Map">
+		SELECT so.songid, so.title, si.title singerName
+		FROM SONG_INF so, SINGER_INF si 
+		WHERE so.status='O'
+			AND so.songid=#{songId}
+			AND si.singerid=so.singerid
+	</select>
+	
+	<insert id="insertTime" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+		INSERT INTO
+		USER_TIME_RING(MDN, S_TIME, E_TIME, SONG_ID, LONGPLAY_YN, SONG_PART, VCODE, CRT_DATE, CHG_DATE)
+		VALUES (#{mdn:VARCHAR}, #{s_time:VARCHAR}, #{e_time:VARCHAR}, #{song_id:VARCHAR}, #{longplay_yn:VARCHAR}, #{song_part:VARCHAR}, #{vcode:VARCHAR}, now(), now());
+	</insert>
+	
+	<insert id="insertCaller" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+	    INSERT INTO 
+		USER_CALLER_RING(MDN, CALLER_MDN, SONG_ID, LONGPLAY_YN, SONG_PART, VCODE, CRT_DATE, CHG_DATE)
+		VALUES (#{mdn:VARCHAR}, #{caller_mdn:VARCHAR}, #{song_id:VARCHAR}, #{longplay_yn:VARCHAR}, #{song_part:VARCHAR}, #{vcode:VARCHAR}, now(), now());
+	</insert>
+	
+	<update id="updateCaller" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+	    UPDATE USER_CALLER_RING
+		SET CALLER_MDN= #{caller_mdn:VARCHAR}, SONG_ID= #{song_id:VARCHAR}, LONGPLAY_YN=#{longplay_yn}, SONG_PART=#{song_part:VARCHAR}, VCODE=#{vcode:VARCHAR}, CHG_DATE=now()
+		WHERE MDN= #{mdn:VARCHAR}
+		AND CALLER_MDN= #{original_caller_mdn:VARCHAR};
+	</update>
+	
+	<update id="updateTime" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+	    UPDATE USER_TIME_RING
+		SET S_TIME=#{s_time:VARCHAR}, E_TIME=#{e_time:VARCHAR}, SONG_ID= #{song_id:VARCHAR}, LONGPLAY_YN=#{longplay_yn}, SONG_PART=#{song_part:VARCHAR}, VCODE=#{vcode:VARCHAR}, CHG_DATE=now()
+		WHERE MDN= #{mdn:VARCHAR}
+		AND S_TIME= #{original_s_time:VARCHAR} 
+		AND E_TIME= #{original_e_time:VARCHAR};
+	</update>
+	
+	<select id="getTimeCheckList" parameterType="String" resultType="com.wizontech.kct.entity.TimeCheckVo">
+	    SELECT S_TIME, E_TIME FROM USER_TIME_RING WHERE MDN = #{mdn:VARCHAR};
+	</select>
+	
+	<delete id="deleteCaller" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+	    DELETE FROM USER_CALLER_RING WHERE MDN = #{mdn:VARCHAR} AND CALLER_MDN = #{caller_mdn:VARCHAR};
+	</delete>
+	
+	<delete id="deleteTime" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+	    DELETE FROM USER_TIME_RING WHERE MDN = #{mdn:VARCHAR} AND S_TIME = #{s_time:VARCHAR};
+	</delete>
+</mapper>

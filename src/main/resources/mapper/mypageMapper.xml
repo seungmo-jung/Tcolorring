@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="mypageMapper">
+	<select id="getPurchase" parameterType="com.wizontech.kct.entity.PurchaseHistVo" resultType="com.wizontech.kct.entity.PurchaseHistListVo">
+	    SELECT up.*, ub.VCODE AS BR_VCODE
+		FROM 
+		(
+			SELECT pu.VCODE, pu.SONG_ID, pu.LONGPLAY_YN AS LONGPLAY_YN, pu.SONG_PART AS SONG_PART
+			, so.SONG_TITLE, si.SINGER_NAME, pu.PRICE, DATE_FORMAT( pu.PURCHASE_DATE, '%Y/%m/%d') AS P_DATE
+			, CASE pu.LONGPLAY_YN
+				WHEN '1' THEN '롱'
+				WHEN '0' THEN '일반'
+			END AS C_LONGPLAY_YN
+			, CASE pu.SONG_PART
+				WHEN '1' THEN '하이라이트'
+				WHEN '2' THEN '전반부'
+				WHEN '3' THEN '후반부'
+			END AS C_SONG_PART
+			FROM 
+				(
+					SELECT SONG_ID, PURCHASE_DATE, PRICE, SONG_PART, LONGPLAY_YN, VCODE 
+					FROM USER_PURCHASE
+					WHERE SO_CUST_NO = #{so_cust_no:VARCHAR}
+				)pu, SONG_INF so, SINGER_INF si
+			WHERE so.SONG_ID = pu.SONG_ID
+			AND so.SINGER_ID = si.SINGER_ID
+		) up
+		LEFT JOIN 
+			(
+				SELECT VCODE 
+ 				FROM USER_BASIC_RING
+    			WHERE MDN = #{mdn:VARCHAR}
+			) ub
+		ON up.VCODE = ub.VCODE
+		ORDER BY ub.VCODE DESC, up.P_DATE DESC
+		LIMIT ${start}, ${rowPerPage}
+	</select>
+		
+	<select id="totalCntPurchase" parameterType="com.wizontech.kct.entity.PurchaseHistVo" resultType="java.lang.Integer">
+	    SELECT COUNT(*) AS totalCnt FROM USER_PURCHASE WHERE SO_CUST_NO = #{so_cust_no:VARCHAR};
+	</select>
+	
+	<select id="checkDefaultSong" parameterType="String" resultType="int">
+	    SELECT COUNT(MDN) FROM USER_BASIC_RING WHERE MDN = #{mdn:VARCHAR};
+	</select>
+	
+	<update id="deleteDefaultSong" parameterType="String">
+	    UPDATE USER_BASIC_RING SET SONG_ID='0'
+		, LONGPLAY_YN = '0'
+		, SONG_PART = '1'
+		, VCODE = 'etc00000001'
+		, CHG_DATE = now()
+		WHERE MDN = #{mdn:VARCHAR};
+	</update>
+	
+	<insert id="insertDefaultSong" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+		INSERT INTO 
+		USER_BASIC_RING(MDN, SONG_ID, LONGPLAY_YN, SONG_PART, VCODE, CRT_DATE, CHG_DATE)
+		VALUES(#{mdn:VARCHAR}, #{song_id:VARCHAR}, #{longplay_yn:VARCHAR}, #{song_part:VARCHAR}, #{vcode:VARCHAR}, now(), now());
+	</insert>
+	
+	<update id="updateDefaultSong" parameterType="com.wizontech.kct.entity.CommonSongInfoVo">
+		UPDATE USER_BASIC_RING SET SONG_ID = #{song_id: VARCHAR}
+		, LONGPLAY_YN = #{longplay_yn: VARCHAR}
+		, SONG_PART = #{song_part: VARCHAR}
+		, VCODE = #{vcode : VARCHAR}
+		, CHG_DATE = now()
+		WHERE MDN = #{mdn:VARCHAR};
+	</update>
+</mapper>

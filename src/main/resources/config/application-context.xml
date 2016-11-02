@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:lang="http://www.springframework.org/schema/lang" xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+    http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.5.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-2.5.xsd
+    http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang-2.5.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-2.5.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.5.xsd">
+
+  <!-- 어노테이션이 적용된 class( @Controller, @Service, @Repository 를 포함한 class )를 
+    로딩 base-package로 부터 스캔을 할 때 Controller 타입은 제외 시킨다. 제외 시키는 이유는 spring mvc에 
+    관련된 설정 파일은 dispatcher-servlet.xml 에서 스캔 하기 때문이다.
+  <context:component-scan base-package="com.wizontech.s3.api">
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Service" />
+  </context:component-scan>
+  <util:properties id="properties" location="classpath*:**/*.properties" />
+  
+  <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName" value="#{properties['jdbc.driverClassName']}" />
+    <property name="url" value="#{properties['jdbc.url']}" />
+    <property name="username" value="#{properties['jdbc.username']}" />
+    <property name="password" value="#{properties['jdbc.password']}" />
+  </bean>
+  
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSource" />
+  </bean>
+  
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" />
+    <property name="typeAliasesPackage" value="com.wizontech.s3.api.entity"/>
+    <property name="mapperLocations" value="classpath:/com/wizontech/s3/api/mapper/*.xml"/>
+    <property name="configLocation" value="classpath:/com/wizontech/s3/api/config/mybatis-config.xml" />
+    <property name="transactionFactory">
+      <bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" />
+    </property>
+  </bean>
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="basePackage" value="com.wizontech.s3.api.mapper" />
+  </bean>
+  -->
+  
+  <context:annotation-config />
+  <util:properties id="configs" location="classpath*:config/*.properties" />
+  <!-- 
+  <bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location">
+      <value>classpath:config/db.properties</value>
+    </property>
+  </bean>
+  -->
+  
+  <!-- <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> -->
+  <bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+    <property name="defaultEncoding" value="UTF-8"/>
+    <property name="basenames">
+      <list>
+        <value>classpath:messages/mainMessage</value>
+      </list>
+    </property>
+  </bean>
+  <bean id="messageAccessor" class="org.springframework.context.support.MessageSourceAccessor">
+    <constructor-arg ref="messageSource"/>
+  </bean>
+  
+  <bean id="dataSourceToktokring" class="org.apache.tomcat.jdbc.pool.DataSource" destroy-method="close">
+    <property name="driverClassName" value="#{configs['jdbc.toktokring.driver']}" />
+    <property name="url" value="#{configs['jdbc.toktokring.url']}" />
+    <property name="username" value="#{configs['jdbc.toktokring.username']}" />
+    <property name="password" value="#{configs['jdbc.toktokring.password']}" />
+    <property name="initialSize" value="#{configs['jdbc.toktokring.initialsize']}" />
+	<property name="maxActive" value="#{configs['jdbc.toktokring.maxactive']}" />
+	<property name="maxIdle" value="#{configs['jdbc.toktokring.maxidle']}" />
+	<property name="minIdle" value="#{configs['jdbc.toktokring.minidle']}" />
+	<property name="timeBetweenEvictionRunsMillis" value="#{configs['jdbc.toktokring.timebetweenevictionrunsmillis']}" />
+	<property name="minEvictableIdleTimeMillis" value="#{configs['jdbc.toktokring.minevictableidletimemillis']}" />           
+    <property name="removeAbandoned" value="#{configs['jdbc.toktokring.removeabandoned']}"/>
+    <property name="removeAbandonedTimeout" value="#{configs['jdbc.toktokring.removeabandonedtimeout']}"/>
+    <property name="logAbandoned" value="#{configs['jdbc.toktokring.logabandoned']}" />
+	<property name="testOnBorrow" value="#{configs['jdbc.toktokring.testOnBorrow']}" />
+    <property name="testOnReturn" value="#{configs['jdbc.toktokring.testOnReturn']}" />
+    <property name="testWhileIdle" value="#{configs['jdbc.toktokring.testWhileIdle']}" />
+    <property name="validationQuery" value="#{configs['jdbc.toktokring.validateionQuery']}" />
+  </bean>
+  <tx:annotation-driven transaction-manager="transactionManager" />
+  <!-- <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" /> -->
+  
+  <bean id="transactionManagerToktokring" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+    <property name="dataSource" ref="dataSourceToktokring"></property>
+  </bean>
+  <bean id="sqlSessionFactoryToktokring" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSourceToktokring" />
+    <property name="configLocation" value="classpath:config/sqlMapConfig.xml" />
+    <!-- <property name="typeAliasesPackage" value="com.wizontech.s3.api.entity"/> -->
+    <property name="mapperLocations" value="classpath:mapper/*.xml"/>
+    <!--<property name="transactionFactory"> -->
+      <!--<bean class="org.apache.ibatis.transaction.managed.ManagedTransactionFactory" /> -->
+    <!--</property> -->
+  </bean>
+  <!-- 
+  <bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+    <property name="basePackage" value="com.wizontech.s3.api.mapper" />
+  </bean>
+  -->
+  <bean id="sqlSessionToktokring" class="org.mybatis.spring.SqlSessionTemplate">
+    <constructor-arg ref="sqlSessionFactoryToktokring" />
+  </bean>
+</beans>

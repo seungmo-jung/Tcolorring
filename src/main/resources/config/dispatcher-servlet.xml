@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xmlns:context="http://www.springframework.org/schema/context"
+  xmlns:util="http://www.springframework.org/schema/util"
+  xmlns:task="http://www.springframework.org/schema/task"
+  xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:mvc="http://www.springframework.org/schema/mvc"
+  xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+    http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+    http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+    http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
+    http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.1.xsd
+    http://www.springframework.org/schema/mvc
+    http://www.springframework.org/schema/mvc/spring-mvc.xsd">
+
+    
+  <!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+  
+  <!-- Enables the Spring MVC @Controller programming model -->
+  <annotation-driven />
+  
+  <context:component-scan base-package="com.wizontech.kct" />
+  <!-- 
+  <context:component-scan base-package="com.wizontech.s3.api" use-default-filters="false">
+    <context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+  </context:component-scan>
+  -->
+  
+  <!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+  <!-- 
+  <resources mapping="/resources/**" location="/resources/" />
+  -->
+  
+  <!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+  <beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+    <beans:property name="prefix" value="/WEB-INF/views/"/>
+    <beans:property name="suffix" value=".jsp"/>
+  </beans:bean>
+  
+  <mvc:interceptors>
+      <mvc:interceptor>
+          <mvc:mapping path="/main.do"/>
+          <mvc:mapping path="/search.do"/>
+          <mvc:mapping path="/singer.do"/>
+          <mvc:mapping path="/album.do"/>
+          <mvc:mapping path="/singer/*"/>
+          <mvc:mapping path="/album/*"/>
+          <mvc:mapping path="/more/*"/>
+          <mvc:mapping path="/search/*"/>
+          
+		<beans:bean class="com.wizontech.kct.common.LoginInterceptor" name="loginInterceptor"></beans:bean>
+      </mvc:interceptor>
+      
+      <mvc:interceptor>
+          <mvc:mapping path="/mypage/*"/>
+          <mvc:mapping path="/mypage/popup/*"/>
+          <!-- <mvc:mapping path="/popup/*"/> -->
+          
+          <beans:bean class="com.wizontech.kct.common.ServiceInterceptor" name="serviceInterceptor"></beans:bean>
+      </mvc:interceptor>
+    </mvc:interceptors>
+    
+  <mvc:resources mapping ="/css/**" location="/css/" />
+  <mvc:resources mapping ="/js/**" location="/js/" />
+  <mvc:resources mapping ="/img/**" location="/img/" />
+
+  <!-- interceptor-login-check
+  <interceptors>
+    <interceptor>
+      <beans:bean class="com.skt.apollo.common.interceptor.SessionInterceptor"/>
+      <mapping path="/front/*"/>
+      <exclude-mapping path="/front/login.do"/>
+      <exclude-mapping path="/front/apolloLogin.do"/>
+      <exclude-mapping path="/front/apolloLogout.do"/>
+    </interceptor>
+  </interceptors>
+  <beans:bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+  -->
+  
+  <!-- Json
+  <beans:bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
+    <beans:property name="webBindingInitializer">
+	  <beans:bean class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer"/>
+    </beans:property>
+    <beans:property name="messageConverters">
+      <beans:list>
+        <beans:bean class="org.springframework.http.converter.json.MappingJacksonHttpMessageConverter">
+          <beans:property name="supportedMediaTypes" value="application/json;charset=UTF-8"/>
+        </beans:bean>
+      </beans:list>
+    </beans:property>
+  </beans:bean>
+  -->
+
+
+  
+</beans:beans>
